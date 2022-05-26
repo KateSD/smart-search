@@ -1,5 +1,8 @@
-const ModalWindow = ({editTitle, onEditTitle, editBody, onEditBody, onSave, item}) => {
+import React from 'react'
 
+const ModalWindow = (
+    {editTitle, onEditTitle, editBody, onEditBody, onSave, item}
+) => {
     return (
         <div className="modal" className="modal fade" id="exampleModal" tabIndex="-1" role="dialog"
              aria-labelledby="exampleModalLabel"
@@ -31,13 +34,13 @@ const ModalWindow = ({editTitle, onEditTitle, editBody, onEditBody, onSave, item
                         <button type="button" className="btn btn-sm btn-secondary" data-dismiss="modal">Close
                         </button>
                         <button type="button" className="btn btn-sm btn-outline-dark" data-dismiss="modal"
-                                onClick={() => onSave(item.id)}>Save changes
+                                onClick={() => onSave(item.id, editTitle, editBody)}>Save changes
                         </button>
                     </div>
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default ModalWindow;

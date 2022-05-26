@@ -1,15 +1,13 @@
 import Autocomplete from "./Autocomplete";
-import './styles.css'
+import '../styles/styles.css'
 import React, {useEffect, useState} from "react";
-import {loadPosts, selectAllPosts, edit} from './redux/postsSlice'
+import {loadPosts, selectAllPosts, edit} from '../redux/postsSlice'
 import {useDispatch, useSelector} from "react-redux";
 import ModalWindow from "./ModalWindow";
 
 function App() {
-
     const dispatch = useDispatch();
-    const {posts} = useSelector(selectAllPosts)
-
+    const {posts} = useSelector(selectAllPosts);
     useEffect(() => {
         dispatch(loadPosts())
     }, [dispatch]);
@@ -20,21 +18,17 @@ function App() {
             isSelected: false
         }));
         setPostsList(updatedPosts)
-    }, [posts])
-
+    }, [posts]);
     const [editTitle, setEditTitle] = useState('')
     const [editBody, setEditBody] = useState('')
-    const [item, setItem] = useState({})
-    const [postsList, setPostsList] = useState([])
-
-
+    const [item, setItem] = useState({});
+    const [postsList, setPostsList] = useState([]);
     const onEditPost = (list) => {
         setEditTitle(list.title);
         setEditBody(list.body);
         setItem(list)
-    }
-
-    const onSave = (id) => {
+    };
+    const onSave = (id, title, body) => {
         const updatedList = postsList.map(el => el.id === id ? {
             ...el,
             userId: 1,
@@ -44,29 +38,44 @@ function App() {
         } : el);
         dispatch(edit(updatedList));
         setPostsList(updatedList);
-
-    }
-
+    };
     const onResultsChange = (searchResult) => {
         const searchList = postsList.map(el => el.title === searchResult ? {...el, isSelected: true} : el)
         setPostsList(searchList)
-    }
-
+    };
     const onEditTitle = (e) => {
         setEditTitle(e.target.value)
-    }
-
+    };
     const onEditBody = (e) => {
         setEditBody(e.target.value)
-    }
+    };
 
     return (
         <div>
-            <h2>Start your search here:</h2>
+            <h4>Start your search here:</h4>
             <Autocomplete
                 suggestion={postsList.map(el => el.title)}
                 onResultsChange={onResultsChange}
             />
+            <div>
+                <ul className="list-group">
+                {postsList.map(list => list.isSelected &&
+                    <li className="list-group-item" key={list.id}>
+                        <div className="itemContainer">
+                            {list.title}
+                            <button
+                                className="btn btn-sm btn-outline-dark"
+                                data-toggle="modal"
+                                data-target="#exampleModal"
+                                data-whatever="@fat"
+                                onClick={() => onEditPost(list)}
+                            >
+                                Edit post
+                            </button>
+                        </div>
+                    </li>)}
+                </ul>
+            </div>
             <ModalWindow
                 editTitle={editTitle}
                 onEditTitle={onEditTitle}
@@ -75,26 +84,8 @@ function App() {
                 onSave={onSave}
                 item={item}
             />
-            <div>
-                <ol>
-                    {postsList.map(list => list.isSelected && <li key={list.id}>{list.title}
-                        <button
-                            className="btn btn-sm btn-outline-dark"
-                            data-toggle="modal"
-                            data-target="#exampleModal"
-                            data-whatever="@fat"
-                            onClick={() => onEditPost(list)}
-                        >
-                            Edit post
-                        </button>
-
-                    </li>)}
-                </ol>
-            </div>
-
         </div>
     );
 };
-
 
 export default App;

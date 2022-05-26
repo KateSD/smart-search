@@ -1,12 +1,10 @@
 import {useState} from "react";
 
 const Autocomplete = ({suggestion, onResultsChange}) => {
-
     const [filteredSuggestion, setFilteredSuggestion]=useState([]);
     const [activeSuggestionIndex, setActiveSuggectionIndex] = useState(0);
     const [showSuggestion, setShowSuggestion] = useState(false);
     const [input, setInput] = useState("");
-
     const onChange = (e)=>{
         const value = e.target.value;
         let suggestions=[]
@@ -19,31 +17,30 @@ const Autocomplete = ({suggestion, onResultsChange}) => {
         setFilteredSuggestion(suggestions);
         setActiveSuggectionIndex(0);
         setShowSuggestion(true);
+    };
+
+    const onChooseItem = () => {
+        onResultsChange(filteredSuggestion[activeSuggestionIndex])
+        setFilteredSuggestion([])
+        setInput("")
     }
 
     const onClick = (e)=>{
-        setFilteredSuggestion([]);
-        setInput(e.target.innerText);
-        setActiveSuggectionIndex(0);
-        setShowSuggestion(false);
+        onChooseItem()
     };
 
     const onKeyDown = (key)=> {
         if(key.keyCode===13 || key.keyCode===9){
-            onResultsChange(filteredSuggestion[activeSuggestionIndex])
-            setFilteredSuggestion([])
-            setInput("")
-
+            onChooseItem()
         } if (key.keyCode===38){
             setActiveSuggectionIndex(activeSuggestionIndex-1)
-
         } if(key.keyCode===40){
             setActiveSuggectionIndex(activeSuggestionIndex+1)
         }
-    }
+    };
 
     const SuggestionsListComponent = () => {
-      return filteredSuggestion.length>-1? (
+      return filteredSuggestion.length ? (
           <ul className='suggestion'>
               {filteredSuggestion.map((suggestion,index)=>{
                   let className;
@@ -54,7 +51,6 @@ const Autocomplete = ({suggestion, onResultsChange}) => {
                       <li className={className} key={suggestion} onClick={onClick}>
                           {suggestion}
                       </li>
-
                   );
               })}
           </ul>
@@ -64,7 +60,6 @@ const Autocomplete = ({suggestion, onResultsChange}) => {
               <em>No suggestions</em>
           </div>
       )};
-
 
   return(
       <>
@@ -76,7 +71,6 @@ const Autocomplete = ({suggestion, onResultsChange}) => {
           placeholder='Title...'
       />
           {showSuggestion && input && <SuggestionsListComponent/>}
-
       </>
   );
 };

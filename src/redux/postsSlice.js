@@ -1,5 +1,4 @@
 import {createSlice, createAsyncThunk} from "@reduxjs/toolkit";
-import axios from "axios";
 
 export const loadPosts = createAsyncThunk(
     "posts/load",
@@ -9,12 +8,23 @@ export const loadPosts = createAsyncThunk(
     }
 );
 
-
 const postsSlice = createSlice({
     name: 'posts',
     initialState: {
         posts: [],
         status: null
+    },
+    reducers:{
+        edit(state, action){
+            const {id, title, body}=action.payload
+            const currentPost = state.posts.find(post=>post.id===id)
+            if(currentPost){
+                currentPost.title=title
+                currentPost.body=body
+                currentPost.userId=1
+                currentPost.isSelected=true
+            }
+        }
     },
     extraReducers: {
         [loadPosts.pending]: (state, action) => {
@@ -30,5 +40,8 @@ const postsSlice = createSlice({
     }
 })
 
-
+export const {edit} = postsSlice.actions
 export default postsSlice.reducer;
+
+export const selectAllPosts = state=> state.posts
+export const selectPostById = (state, postId)=> state.posts.find(post=>post.id===postId)
